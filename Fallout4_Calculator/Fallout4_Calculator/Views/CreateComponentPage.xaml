@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Fallout4_Calculator.Views.CreateComponentPage"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:viewmodels="clr-namespace:Fallout4_Calculator.ViewModels"
+             xmlns:converter="clr-namespace:Fallout4_Calculator.Converter"
+             BackgroundColor="Black"
+             >
+
+    <ContentPage.BindingContext>
+        <viewmodels:CreateComponentViewModel/>
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:StringToImageSourceConverter x:Key="StringToImage" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Behaviors>
+        <xct:EventToCommandBehavior
+            EventName="Appearing"
+            Command="{Binding CreateComponentAppearingCommand}"/>
+        <xct:EventToCommandBehavior
+            EventName="Disappearing"
+            Command="{Binding CreateComponentDisappearingCommand}"/>
+    </ContentPage.Behaviors>
+
+    <ContentPage.Content>
+        <ScrollView VerticalScrollBarVisibility="Never">
+            <StackLayout Spacing="3" Padding="10">
+                <Frame BorderColor="DarkGreen" BackgroundColor="DarkGreen" Padding="2" CornerRadius="10">
+                    <StackLayout BackgroundColor="Black" Spacing="2" Margin="2" Padding="5">
+                        <Label Text="Название:"  FontSize="Medium" FontAttributes="Bold" Margin="8,0,0,0" />
+                        <Frame BorderColor="DarkGreen"  Padding="{OnPlatform Android=4,UWP=0}"  BackgroundColor="{StaticResource PageColor}" CornerRadius="10">
+                            <Entry Text="{Binding Name_Component}" Placeholder="Введите название" FontSize="Medium" BackgroundColor="{StaticResource PageColor}"/>
+                        </Frame>
+                        <Label Text="Вес:"  FontSize="Medium" FontAttributes="Bold" Margin="8,0,0,0" />
+                        <Frame BorderColor="DarkGreen" Padding="{OnPlatform Android=4,UWP=0}" BackgroundColor="{StaticResource PageColor}" CornerRadius="10">
+                            <Entry Text="{Binding Weight_Component}" Placeholder="Введите вес" FontSize="Medium" BackgroundColor="{StaticResource PageColor}">
+                                <Entry.Behaviors>
+                                    <xct:EventToCommandBehavior EventName="TextChanged" Command="{Binding WeightComponentCommand}"/>
+                                </Entry.Behaviors>
+                            </Entry>
+                        </Frame>
+                        <Label Text="Стоимость:"  FontSize="Medium" FontAttributes="Bold" Margin="8,0,0,0" />
+                        <Frame BorderColor="DarkGreen"  Padding="{OnPlatform Android=4,UWP=0}" BackgroundColor="{StaticResource PageColor}" CornerRadius="10">
+                            <Entry Text="{Binding Price_Component}" Placeholder="Введите цену" FontSize="Medium" BackgroundColor="{StaticResource PageColor}">
+                                <Entry.Behaviors>
+                                    <xct:EventToCommandBehavior EventName="TextChanged" Command="{Binding PriceComponentCommand}"/>
+                                </Entry.Behaviors>
+                            </Entry>
+                        </Frame>
+
+                    </StackLayout>
+                </Frame>
+                <Frame Margin="5" BorderColor="DarkGreen" Padding="{OnPlatform Android=4,UWP=0}" CornerRadius="10" BackgroundColor="{StaticResource PageColor}">
+                    <SearchBar Placeholder="Введите URL изображения" Text="{Binding Image_URL}" SearchCommand="{Binding ImageURLCommand}" BackgroundColor="{StaticResource PageColor}"/>
+                </Frame>
+                <Frame  HeightRequest="300" WidthRequest="300" Margin="5" HorizontalOptions="Center" VerticalOptions="Center" BorderColor="DarkGreen" BackgroundColor="DarkGreen" Padding="2"  CornerRadius="0">
+                    <Grid Margin="0" Padding="0">
+                        <Image x:Name="Img" Source="{Binding ImageString, Converter={StaticResource StringToImage}}" BackgroundColor="{StaticResource PageColor}" HeightRequest="300" WidthRequest="300" >
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ImageUploadCommand}"/>
+                            </Image.GestureRecognizers>
+                        </Image>
+                        <ActivityIndicator BindingContext="{x:Reference Img}" IsRunning="{Binding Path=IsLoading}"  IsEnabled="False" xct:CornerRadiusEffect.CornerRadius="100" 
+                                           Color="DarkGreen">
+                            <ActivityIndicator.Margin>
+                                <OnPlatform x:TypeArguments="Thickness">
+                                    <On Platform="Android" Value="100" />
+                                </OnPlatform>
+                            </ActivityIndicator.Margin>
+                        </ActivityIndicator>
+                    </Grid>
+                </Frame>
+                <Button Text="Создать"  BackgroundColor="DarkGreen"  CornerRadius="10" Command="{Binding CreateComponentCommand}" HorizontalOptions="FillAndExpand"></Button>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

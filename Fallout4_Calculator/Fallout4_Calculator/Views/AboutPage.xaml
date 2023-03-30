@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Fallout4_Calculator.ViewModels"
+             x:Class="Fallout4_Calculator.Views.AboutPage"
+             xmlns:local="clr-namespace:Fallout4_Calculator"
+             BackgroundColor="{StaticResource PageColor}">
+    <ContentPage.BindingContext>
+        <vm:AboutViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="Accent">Green</Color>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackLayout BackgroundColor="{StaticResource Accent}" VerticalOptions="FillAndExpand" HorizontalOptions="Fill">
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
+                <ContentView Padding="0,40,0,40" VerticalOptions="FillAndExpand">
+                    <Image Source="{local:ImageResource Fallout4_Calculator.Images.Fallout_4_logo.png}" VerticalOptions="Center" HeightRequest="{OnPlatform Android=74,UWP=100}" />
+                </ContentView>
+            </StackLayout>
+        </StackLayout>
+        <ScrollView Grid.Row="1">
+            <StackLayout Orientation="Vertical" Padding="30,24,30,24" Spacing="10">
+                <Label Text="О приложении:" FontSize="Title"/>
+                <Frame BorderColor="DarkGreen" Padding="{OnPlatform Android=4,UWP=0}" BackgroundColor="{StaticResource PageColor}" CornerRadius="10">
+                    <Editor Text="Приложение Fallout4_Calculator предназначено для того, чтобы упростить работу в режиме строительства игры Fallout 4. Оно позволяет выбрать необходимые объекты и выполнить расчёт требуемых ресурсов для постройки этих объектов." FontSize="16" IsReadOnly="True" BackgroundColor="Transparent"
+                        IsTabStop="False" />
+                </Frame>
+                
+                <Label FontSize="16" Padding="0,24,0,0" Text="Узнать больше:"/>
+                <Button Margin="0,10,0,0" Text="Перейти"
+                        Command="{Binding OpenWebCommand}"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White" />
+            </StackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

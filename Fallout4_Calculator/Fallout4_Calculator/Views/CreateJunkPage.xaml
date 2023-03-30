@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Fallout4_Calculator.Views.CreateJunkPage"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:viewmodels="clr-namespace:Fallout4_Calculator.ViewModels"
+             xmlns:converter="clr-namespace:Fallout4_Calculator.Converter"
+             xmlns:model="clr-namespace:Fallout4_Calculator.Models"
+             xmlns:local="clr-namespace:Fallout4_Calculator"
+             BackgroundColor="Black"
+             x:Name="CreateJunk"
+             >
+
+    <ContentPage.BindingContext>
+        <viewmodels:CreateJunkViewModel/>
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:StringToImageSourceConverter x:Key="StringToImage" />
+            <converter:IntToStringConverter x:Key="IntToString"/>
+            <converter:ComponentAmountConverter x:Key="ComponentAmount"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Behaviors>
+        <xct:EventToCommandBehavior
+            EventName="Appearing"
+            Command="{Binding CreateJunkAppearingCommand}"/>
+        <xct:EventToCommandBehavior
+            EventName="Disappearing"
+            Command="{Binding CreateJunkDisappearingCommand}"/>
+    </ContentPage.Behaviors>
+    
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Включить компонент" Command="{Binding IncludeComponentCommand}"   Order="Secondary"/>
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <ScrollView VerticalScrollBarVisibility="Never">
+            <StackLayout Spacing="3" Padding="10">
+                <Frame BorderColor="DarkGreen" BackgroundColor="DarkGreen" Padding="2" CornerRadius="10">
+                    <StackLayout BackgroundColor="Black" Spacing="2" Margin="2" Padding="5">
+                        <Label Text="Название:"  FontSize="Medium" FontAttributes="Bold" Margin="8,0,0,0" />
+                        <Frame BorderColor="DarkGreen" Padding="{OnPlatform Android=4,UWP=0}" BackgroundColor="{StaticResource PageColor}" CornerRadius="10">
+                            <Entry Text="{Binding Name_Junk}" Placeholder="Введите название" FontSize="Medium" BackgroundColor="{StaticResource PageColor}"/>
+                        </Frame>
+                        <Label Text="Вес:"  FontSize="Medium" FontAttributes="Bold" Margin="8,0,0,0" />
+                        <Frame BorderColor="DarkGreen" Padding="{OnPlatform Android=4,UWP=0}" BackgroundColor="{StaticResource PageColor}" CornerRadius="10">
+                            <Entry Text="{Binding Weight_Junk}" Placeholder="Введите вес" FontSize="Medium" BackgroundColor="{StaticResource PageColor}">
+                                <Entry.Behaviors>
+                                    <xct:EventToCommandBehavior EventName="TextChanged" Command="{Binding WeightJunkCommand}"/>
+                                </Entry.Behaviors>
+                            </Entry>
+                        </Frame>
+                        <Label Text="Стоимость:"  FontSize="Medium" FontAttributes="Bold" Margin="8,0,0,0" />
+                        <Frame BorderColor="DarkGreen" Padding="{OnPlatform Android=4,UWP=0}" BackgroundColor="{StaticResource PageColor}" CornerRadius="10">
+                            <Entry Text="{Binding Price_Junk}" Placeholder="Введите цену" FontSize="Medium" BackgroundColor="{StaticResource PageColor}">
+                                <Entry.Behaviors>
+                                    <xct:EventToCommandBehavior EventName="TextChanged" Command="{Binding PriceJunkCommand}"/>
+                                </Entry.Behaviors>
+                            </Entry>
+                        </Frame>
+                    </StackLayout>
+                </Frame>
+                <Frame Margin="5" BorderColor="DarkGreen" Padding="{OnPlatform Android=4,UWP=0}" CornerRadius="10" BackgroundColor="{StaticResource PageColor}">
+                    <SearchBar Placeholder="Введите URL изображения" Text="{Binding Image_URL}" SearchCommand="{Binding ImageURLCommand}" BackgroundColor="{StaticResource PageColor}"/>
+                </Frame>
+                <Frame  HeightRequest="300" WidthRequest="300" Margin="5" HorizontalOptions="Center" VerticalOptions="Center" BorderColor="DarkGreen" BackgroundColor="DarkGreen" Padding="2"  CornerRadius="0">
+                    <Grid Margin="0" Padding="0">
+                        <Image x:Name="Img" Source="{Binding ImageString, Converter={StaticResource StringToImage}}" BackgroundColor="{StaticResource PageColor}" HeightRequest="300" WidthRequest="300" >
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ImageUploadCommand}"/>
+                            </Image.GestureRecognizers>
+                        </Image>
+                        <ActivityIndicator BindingContext="{x:Reference Img}" IsRunning="{Binding Path=IsLoading}"  IsEnabled="False" xct:CornerRadiusEffect.CornerRadius="100"
+                                           Color="DarkGreen">
+                            <ActivityIndicator.Margin>
+                                <OnPlatform x:TypeArguments="Thickness">
+                                    <On Platform="Android" Value="100" />
+                                </OnPlatform>
+                            </ActivityIndicator.Margin>
+                        </ActivityIndicator>
+                    </Grid>
+                </Frame>
+                <Frame BorderColor="DarkGreen" BackgroundColor="DarkGreen" Padding="2" CornerRadius="10">
+                    <StackLayout BackgroundColor="Black" Spacing="10" Margin="2" Padding="5">
+                        <Label Text="Компоненты:"  FontSize="Medium" FontAttributes="Bold" Margin="8,0,0,0" />
+                        <StackLayout x:Name="st"  BindableLayout.ItemsSource="{Binding Amount_Component}" BackgroundColor="Black" Spacing="10" Margin="2" Padding="5">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame BorderColor="DarkGreen"  Padding="4" BackgroundColor="DarkGreen" CornerRadius="10">
+                                        <Grid Padding="10" x:DataType="model:Components_A" BackgroundColor="Black">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Image Source="{Binding Image, Converter={StaticResource StringToImage}}"
+                                             Grid.Row="0"
+                                             Grid.Column="0"
+                                             HeightRequest="100"
+                                             WidthRequest="100" />
+                                            <Frame BorderColor="DarkGreen" BackgroundColor="{StaticResource PageColor}" Padding="10,0,10,6" CornerRadius="10" Grid.Column="0" Grid.Row="1">
+                                                <Label  Text="{Binding Nam_Com}"
+                                                 FontSize="Medium"
+                                                 LineBreakMode="TailTruncation"/>
+                                            </Frame>
+                                            <Frame  BorderColor="DarkGreen" Padding="{OnPlatform Android=4,UWP=0}" BackgroundColor="{StaticResource PageColor}" CornerRadius="10" Grid.Column="0" Grid.Row="2" >
+                                                <Entry x:Name="ent"   Placeholder="Введите количество" FontSize="Medium" BackgroundColor="{StaticResource PageColor}" Keyboard="Numeric">
+                                                    <Entry.Behaviors>
+                                                        <xct:EventToCommandBehavior
+                                                            EventName="TextChanged" Command="{Binding BindingContext.AmountObjectComponentCommand ,Source={x:Reference CreateJunk}}">
+                                                            <xct:EventToCommandBehavior.CommandParameter>
+                                                                <MultiBinding Converter="{StaticResource ComponentAmount}">
+                                                                    <Binding  FallbackValue="{Binding .}"/>
+                                                                    <Binding FallbackValue="{Binding .}" Source="{x:Reference ent}"/>
+                                                                </MultiBinding>
+                                                            </xct:EventToCommandBehavior.CommandParameter>
+                                                        </xct:EventToCommandBehavior>
+                                                    </Entry.Behaviors>
+                                                </Entry>
+                                            </Frame>
+                                        </Grid>
+                                    </Frame>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                    </StackLayout>
+                </Frame>
+                <Button Margin="0,0,0,0" Text="Создать"  BackgroundColor="DarkGreen"  CornerRadius="10" Command="{Binding CreateJunkCommand}" HorizontalOptions="FillAndExpand"/>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,318 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Fallout4_Calculator.Views.BuildCalculatorPage"
+             xmlns:viewmodels="clr-namespace:Fallout4_Calculator.ViewModels"
+             xmlns:converter="clr-namespace:Fallout4_Calculator.Converter"
+             xmlns:model="clr-namespace:Fallout4_Calculator.Models"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:local="clr-namespace:Fallout4_Calculator"
+             x:DataType="viewmodels:BuildCalculatorViewModel"
+             Title="{Binding Title}"
+             BackgroundColor="{StaticResource PageColor}"
+             x:Name="BuildCalculator">
+    <ContentPage.BindingContext>
+        <viewmodels:BuildCalculatorViewModel/>
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:StringToImageSourceConverter x:Key="StringToImage" />
+            <converter:IntToStringConverter x:Key="IntToString"/>
+            <converter:ObjectAmountConverter x:Key="ObjectAmount"/>
+            <converter:JunkAmountConverter x:Key="JunkAmount"/>
+            <converter:DecimalToStringConverter x:Key="DecimalToString"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Behaviors>
+        <xct:EventToCommandBehavior
+            EventName="Appearing"
+            Command="{Binding BuildCalculatorAppearingCommand}"/>
+        <xct:EventToCommandBehavior
+            EventName="Disappearing"
+            Command="{Binding BuildCalculatorDisappearingCommand}"/>
+    </ContentPage.Behaviors>
+
+
+    <ContentPage.ToolbarItems >
+        <ToolbarItem  Text="Добавить объект" Command="{Binding AddObjectCommand}" Order="Secondary"/>
+        <ToolbarItem  Text="Добавить хлам" Command="{Binding AddJunkCommand}" Order="Secondary"/>
+    </ContentPage.ToolbarItems>
+    
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout Padding="10">
+            <Frame BorderColor="DarkGreen" BackgroundColor="DarkGreen" Padding="2"  CornerRadius="10" >
+                <StackLayout BackgroundColor="Black" Spacing="10" Margin="2" Padding="5" HeightRequest="{OnPlatform Android=300 ,UWP=370}">
+                    <Label Text="Ресурсы:"  FontSize="Medium" FontAttributes="Bold" Margin="8,0,0,0" />
+                        <Grid Margin="0" Padding="0">
+                            <ActivityIndicator    IsEnabled="False" xct:CornerRadiusEffect.CornerRadius="100" Color="DarkGreen">
+                                <ActivityIndicator.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness">
+                                        <On Platform="Android" Value="80" />
+                                    </OnPlatform>
+                                </ActivityIndicator.Margin>
+                            </ActivityIndicator>
+                            <CollectionView  ItemsSource="{Binding Calculator_Components}" HorizontalScrollBarVisibility="Always" IsVisible="{Binding IsBusy}">
+                                <CollectionView.ItemsLayout>
+                                    <GridItemsLayout Orientation="Horizontal"
+                                     HorizontalItemSpacing="5"
+                                     VerticalItemSpacing="5"
+                                     Span="1" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Frame BorderColor="DarkGreen"  Padding="3" BackgroundColor="DarkGreen" CornerRadius="10">
+                                            <Grid BackgroundColor="Black" Padding="8"  x:DataType="model:Components_Calculator">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="*" />
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Image Grid.Column="0" Grid.Row="0"  Source="{Binding Image,Converter={StaticResource StringToImage}}"
+                                                       HeightRequest="100"
+                                                       WidthRequest="100"
+                                                       />
+                                                <Frame BorderColor="DarkGreen" Padding="10,0,10,6" CornerRadius="10" Grid.Column="0" Grid.Row="1">
+                                                    <Label  Text="{Binding Nam_Com}"
+                                                     FontSize="Medium"
+                                                     LineBreakMode="TailTruncation"/>
+                                                </Frame>
+                                                <Grid Grid.Row="2" Grid.Column="0" RowSpacing="1" HorizontalOptions="Center">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label  Text="Цена"
+                                                     FontSize="Small"
+                                                     LineBreakMode="TailTruncation" Grid.Column="0" Grid.Row="0" HorizontalOptions="Center"/>
+                                                    <Label  Text="Вес"
+                                                     FontSize="Small"
+                                                     LineBreakMode="TailTruncation" Grid.Column="1" Grid.Row="0" HorizontalOptions="Center"/>
+                                                    <Frame BorderColor="DarkGreen" Padding="10,0,10,6" CornerRadius="10" Grid.Column="0" Grid.Row="1">
+                                                        <Label  Text="{Binding Price,Converter={StaticResource IntToString}}"
+                                                     FontSize="Medium"
+                                                     HorizontalOptions="Center"/>
+                                                    </Frame>
+                                                    <Frame  BorderColor="DarkGreen" Padding="10,0,10,6" CornerRadius="10" Grid.Column="1" Grid.Row="1">
+                                                        <Label  Text="{Binding Weight,Converter={StaticResource DecimalToString}}"
+                                                     FontSize="Medium"
+                                                     LineBreakMode="TailTruncation"
+                                                     HorizontalOptions="Center"/>
+                                                    </Frame>
+                                                    <Label 
+                                                     Text="Необходимо"
+                                                     FontSize="Small"
+                                                     LineBreakMode="TailTruncation" Grid.Column="0" Grid.Row="2" HorizontalOptions="Center"/>
+                                                    <Label 
+                                                     Text="Имеется"
+                                                     FontSize="Small"
+                                                     LineBreakMode="TailTruncation" Grid.Column="1" Grid.Row="2" HorizontalOptions="Center"/>
+                                                    <Frame BorderColor="DarkGreen" Padding="10,0,10,6" CornerRadius="10" Grid.Column="0" Grid.Row="3">
+                                                        <Label  Text="{Binding Amount,Converter={StaticResource IntToString}}"
+                                                     FontSize="Medium"
+                                                     LineBreakMode="TailTruncation"
+                                                     HorizontalOptions="Center"/>
+                                                    </Frame>
+                                                    <Frame BorderColor="DarkGreen" Padding="10,0,10,6" CornerRadius="10" Grid.Column="1" Grid.Row="3">
+                                                        <Label  Text="{Binding H_Amount,Converter={StaticResource IntToString}}"
+                                                     FontSize="Medium"
+                                                     LineBreakMode="TailTruncation"
+                                                     HorizontalOptions="Center"/>
+                                                    </Frame>
+                                                </Grid>
+                                            </Grid>
+                                        </Frame>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </Grid>
+                    </StackLayout>
+            </Frame>
+            <Frame BorderColor="DarkGreen" BackgroundColor="DarkGreen" Padding="2"  CornerRadius="10">
+                <StackLayout BackgroundColor="Black" Spacing="10" Margin="2" Padding="5"  >
+                        <Label Text="Объекты:"  FontSize="Medium" FontAttributes="Bold" Margin="8,0,0,0" />
+                        <StackLayout x:Name="st"  BindableLayout.ItemsSource="{Binding Amount_Object}" BackgroundColor="Black" Spacing="10" Margin="2" Padding="5">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame BorderColor="DarkGreen"  Padding="4" BackgroundColor="DarkGreen" CornerRadius="10">
+                                        <Grid Padding="10" x:DataType="model:Objects_A" BackgroundColor="Black">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Image Source="{Binding Image, Converter={StaticResource StringToImage}}"
+                                             Grid.Row="1"
+                                             Grid.Column="0"
+                                             Grid.RowSpan="2"
+                                             Aspect="AspectFit"
+                                             HeightRequest="{OnPlatform Android=110,UWP=200}"
+                                             WidthRequest="{OnPlatform Android=110,UWP=200}" />
+                                            <Frame BorderColor="DarkGreen" BackgroundColor="{StaticResource PageColor}" Padding="10,0,10,6" VerticalOptions="Center" CornerRadius="10"  Grid.Column="0" Grid.ColumnSpan="2">
+                                                <Label  Text="{Binding Nam_Obj}"
+                                                 FontSize="Medium"
+                                                 LineBreakMode="TailTruncation"/>
+                                            </Frame>
+                                            <ImageButton  Grid.Column="2"
+                                             BackgroundColor="DarkGreen"
+                                             Source="{local:ImageResource Fallout4_Calculator.Images.x.png}"
+                                             Grid.RowSpan="1"
+                                             HeightRequest="30"
+                                             WidthRequest="30"
+                                             CornerRadius="20"
+                                             HorizontalOptions="Center"
+                                             VerticalOptions="Center"
+                                             >
+                                                <ImageButton.Behaviors>
+                                                    <xct:EventToCommandBehavior EventName="Clicked" Command="{Binding BindingContext.AmountObjectComponentDeleteCommand,Source={x:Reference BuildCalculator}}">
+                                                        <xct:EventToCommandBehavior.CommandParameter>
+                                                            <MultiBinding Converter="{StaticResource ObjectAmount}">
+                                                                <Binding  FallbackValue="{Binding .}"/>
+                                                                <Binding FallbackValue="{Binding .}" Source="{x:Reference ent}"/>
+                                                            </MultiBinding>
+                                                        </xct:EventToCommandBehavior.CommandParameter>
+                                                    </xct:EventToCommandBehavior>
+                                                </ImageButton.Behaviors>
+                                            </ImageButton>
+                                            <Label Text="Количество:"  FontSize="Medium" FontAttributes="Bold"  Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" />
+                                            <Frame  BorderColor="DarkGreen" Padding="{OnPlatform Android=4,UWP=0}" BackgroundColor="{StaticResource PageColor}" CornerRadius="10"  Grid.Column="1" Grid.ColumnSpan="2"  Grid.Row="2" VerticalOptions="Start">
+                                                <Entry x:Name="ent"  Placeholder="Введите количество" FontSize="Medium" BackgroundColor="{StaticResource PageColor}" Keyboard="Numeric"
+                                                   >
+                                                    <Entry.Behaviors>
+                                                        <xct:EventToCommandBehavior x:Name="D"
+                                                            EventName="TextChanged" Command="{Binding BindingContext.AmountObjectComponentCommand ,Source={x:Reference BuildCalculator}}"
+                                                            >
+                                                            <xct:EventToCommandBehavior.CommandParameter>
+                                                                <MultiBinding Converter="{StaticResource ObjectAmount}">
+                                                                    <Binding  FallbackValue="{Binding .}"/>
+                                                                    <Binding FallbackValue="{Binding .}" Source="{x:Reference ent}"/>
+                                                                </MultiBinding>
+                                                            </xct:EventToCommandBehavior.CommandParameter>
+                                                        </xct:EventToCommandBehavior>
+                                                        <xct:EventToCommandBehavior
+                                                            EventName="BindingContextChanged" Command="{Binding BindingContext.AmountObjectComponentBidingCommand,Source={x:Reference BuildCalculator}}">
+                                                            <xct:EventToCommandBehavior.CommandParameter>
+                                                                <MultiBinding Converter="{StaticResource ObjectAmount}">
+                                                                    <Binding  FallbackValue="{Binding .}"/>
+                                                                    <Binding FallbackValue="{Binding .}" Source="{x:Reference ent}"/>
+                                                                </MultiBinding>
+                                                            </xct:EventToCommandBehavior.CommandParameter>
+                                                        </xct:EventToCommandBehavior>
+                                                    </Entry.Behaviors>
+                                                </Entry>
+                                            </Frame>
+                                        </Grid>
+                                    </Frame>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                   
+                </StackLayout>
+                </Frame>
+            <Frame BorderColor="DarkGreen" BackgroundColor="DarkGreen" Padding="2"  CornerRadius="10">
+                    <StackLayout BackgroundColor="Black" Spacing="10" Margin="2" Padding="5"  >
+                        <Label Text="Хлам:"  FontSize="Medium" FontAttributes="Bold" Margin="10,0,0,0" />
+                        <StackLayout x:Name="st1"  BindableLayout.ItemsSource="{Binding Amount_Junk}" BackgroundColor="Black" Spacing="10" Margin="2" Padding="5">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame BorderColor="DarkGreen"  Padding="4" BackgroundColor="DarkGreen" CornerRadius="10">
+                                        <Grid Padding="10" x:DataType="model:Junk_A" BackgroundColor="Black">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Image Source="{Binding Image, Converter={StaticResource StringToImage}}"
+                                             Grid.Row="1"
+                                             Grid.Column="0"
+                                             Grid.RowSpan="2"
+                                             Aspect="AspectFit"
+                                             HeightRequest="{OnPlatform Android=110,UWP=200}"
+                                             WidthRequest="{OnPlatform Android=110,UWP=200}"/>
+                                            <Frame BorderColor="DarkGreen" BackgroundColor="{StaticResource PageColor}" Padding="10,0,10,6" VerticalOptions="Center" CornerRadius="10"  Grid.Column="0" Grid.ColumnSpan="2">
+                                                <Label  Text="{Binding Nam_Jun}"
+                                                 FontSize="Medium"
+                                                 LineBreakMode="TailTruncation"/>
+                                            </Frame>
+                                            <ImageButton  Grid.Column="2"
+                                             BackgroundColor="DarkGreen"
+                                             Source="{local:ImageResource Fallout4_Calculator.Images.x.png}"
+                                             Grid.RowSpan="1"
+                                             HeightRequest="30"
+                                             WidthRequest="30"
+                                             CornerRadius="20"
+                                             HorizontalOptions="Center"
+                                             VerticalOptions="Center"
+                                             >
+                                                <ImageButton.Behaviors>
+                                                    <xct:EventToCommandBehavior EventName="Clicked" Command="{Binding BindingContext.AmountJunkComponentDeleteCommand,Source={x:Reference BuildCalculator}}">
+                                                        <xct:EventToCommandBehavior.CommandParameter>
+                                                            <MultiBinding Converter="{StaticResource JunkAmount}">
+                                                                <Binding  FallbackValue="{Binding .}"/>
+                                                                <Binding FallbackValue="{Binding .}" Source="{x:Reference ent1}"/>
+                                                            </MultiBinding>
+                                                        </xct:EventToCommandBehavior.CommandParameter>
+                                                    </xct:EventToCommandBehavior>
+                                                </ImageButton.Behaviors>
+                                            </ImageButton>
+                                            <Label Text="Количество:"  FontSize="Medium" FontAttributes="Bold"  Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" />
+                                            <Frame  BorderColor="DarkGreen" Padding="{OnPlatform Android=4,UWP=0}" BackgroundColor="{StaticResource PageColor}" CornerRadius="10"  Grid.Column="1" Grid.ColumnSpan="2"  Grid.Row="2" VerticalOptions="Start">
+                                                <Entry x:Name="ent1"  Placeholder="Введите количество" FontSize="Medium" BackgroundColor="{StaticResource PageColor}" Keyboard="Numeric"
+                                                   >
+                                                    <Entry.Behaviors>
+                                                        <xct:EventToCommandBehavior x:Name="D"
+                                                            EventName="TextChanged" Command="{Binding BindingContext.AmountJunkComponentCommand ,Source={x:Reference BuildCalculator}}"
+                                                            >
+                                                            <xct:EventToCommandBehavior.CommandParameter>
+                                                                <MultiBinding Converter="{StaticResource JunkAmount}">
+                                                                    <Binding  FallbackValue="{Binding .}"/>
+                                                                    <Binding FallbackValue="{Binding .}" Source="{x:Reference ent1}"/>
+                                                                </MultiBinding>
+                                                            </xct:EventToCommandBehavior.CommandParameter>
+                                                        </xct:EventToCommandBehavior>
+                                                        <xct:EventToCommandBehavior
+                                                            EventName="BindingContextChanged" Command="{Binding BindingContext.AmountJunkComponentBidingCommand,Source={x:Reference BuildCalculator}}">
+                                                            <xct:EventToCommandBehavior.CommandParameter>
+                                                                <MultiBinding Converter="{StaticResource JunkAmount}">
+                                                                    <Binding  FallbackValue="{Binding .}"/>
+                                                                    <Binding FallbackValue="{Binding .}" Source="{x:Reference ent1}"/>
+                                                                </MultiBinding>
+                                                            </xct:EventToCommandBehavior.CommandParameter>
+                                                        </xct:EventToCommandBehavior>
+                                                    </Entry.Behaviors>
+                                                </Entry>
+                                            </Frame>
+                                        </Grid>
+                                    </Frame>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                    </StackLayout>
+                </Frame>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

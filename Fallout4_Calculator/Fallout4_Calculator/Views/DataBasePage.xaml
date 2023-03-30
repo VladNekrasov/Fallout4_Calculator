@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Fallout4_Calculator.Views.DataBasePage"
+             xmlns:viewmodels="clr-namespace:Fallout4_Calculator.ViewModels"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:converter="clr-namespace:Fallout4_Calculator.Converter"
+             xmlns:local="clr-namespace:Fallout4_Calculator"
+             x:DataType="viewmodels:DataBaseViewModel"
+             Title="{Binding Title}"
+             BackgroundColor="{StaticResource PageColor}"
+             >
+    <ContentPage.BindingContext>
+        <viewmodels:DataBaseViewModel/>
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:StringToImageSourceConverter x:Key="StringToImage" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <ContentPage.Behaviors>
+        <xct:EventToCommandBehavior
+            EventName="Appearing"
+            Command="{Binding DataBaseAppearingCommand}"/>
+        <xct:EventToCommandBehavior
+            EventName="Disappearing"
+            Command="{Binding DataBaseDisappearingCommand}"/>
+    </ContentPage.Behaviors>
+
+
+
+    <ContentPage.ToolbarItems >
+        <ToolbarItem  Text="Изменить объект" Command="{Binding ChangeObjectCommand}" Order="Secondary"/>
+        <ToolbarItem Text="Изменить компонент" Command="{Binding ChangeComponentsCommand}" Order="Secondary"/>
+        <ToolbarItem Text="Изменить хлам" Command="{Binding ChangeJunkCommand}" Order="Secondary"/>
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <ScrollView VerticalScrollBarVisibility="Never">
+            <StackLayout Padding="10">
+                <Frame   Margin="5" HorizontalOptions="Center" VerticalOptions="Center" BorderColor="DarkGreen" BackgroundColor="DarkGreen" Padding="2"  CornerRadius="0">
+                    <Image Aspect="AspectFill"  BackgroundColor="{StaticResource PageColor}"
+                        Source="{OnPlatform
+                        Android={local:ImageResource Fallout4_Calculator.Images.Page1A.png}, 
+                        UWP={local:ImageResource Fallout4_Calculator.Images.Page1.png}
+                        }"
+                     />
+                </Frame>
+                <Frame Margin="4" BorderColor="DarkGreen" Padding="{OnPlatform Android=4,UWP=0}" BackgroundColor="{StaticResource PageColor}" CornerRadius="10">
+                    <Editor Text="{Binding Text_page1}" FontSize="16" IsReadOnly="True" BackgroundColor="Transparent"
+                        IsTabStop="False" />
+                </Frame>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>
